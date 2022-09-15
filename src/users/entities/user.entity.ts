@@ -23,10 +23,10 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ name: 'email', nullable: true })
+  @Column({ name: 'email', nullable: true, unique: true })
   email: string;
 
-  @Column({ name: 'phone', nullable: true })
+  @Column({ name: 'phone', nullable: true, unique: true })
   phone: string;
 
   @Column({ name: 'otp', nullable: true })

@@ -1,6 +1,10 @@
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from 'src/auth/dto/create-user.dto';
 import { User } from './entities/user.entity';
@@ -55,18 +59,20 @@ export class UserRepository {
     try {
       await this.userRepository.save(user);
     } catch (error) {
-      throw new Error(error);
+      if (error.code === '23505')
+        throw new ConflictException('Email or Number phone already exists');
     }
     return user;
   }
 
-  async updateUser(value: string, id: string): Promise<void> {
+  async updateOtpUser(value: string, id: string): Promise<void> {
     try {
       await this.userRepository.update(id, { otp: value });
     } catch (error) {
       throw new Error(error);
     }
   }
+
   async deleteUserById(id: string): Promise<void> {
     const result = await this.userRepository.delete({ id: id });
 

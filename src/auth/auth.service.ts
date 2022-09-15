@@ -22,7 +22,7 @@ export class AuthService {
     const user = await this.userRepository.createUser(createUserDto);
     const otpUser = await this.mailService.sendUserConfirmation();
     const { accessToken } = await this.authRepository.createSession(user);
-    await this.userRepository.updateUser(otpUser, user.id);
+    await this.userRepository.updateOtpUser(otpUser, user.id);
     return { accessToken };
   }
 
@@ -40,12 +40,17 @@ export class AuthService {
     }
   }
 
-  async logout(refreshToken: string) {
+  async logout(accessToken: string): Promise<void> {
     try {
-      const { id } = await this.authRepository.verifyRefreshToken(refreshToken);
-
-      return this.authRepository.removeToken(id);
-    } catch (e) {}
+      const session = await this.authRepository.findOneByToken(accessToken);
+      const { id } = await this.authRepository.verifyRefreshToken(
+        session.refreshToken,
+      );
+      console.log(id);
+      await this.authRepository.removeToken(session.id);
+    } catch (e) {
+      throw new Error(e);
+    }
   }
 
   async verifyOtpEmail(otp: string, authHeaders: string) {
@@ -56,9 +61,9 @@ export class AuthService {
     const validOTP = await bcrypt.compare(`${otp}`, user.otp);
     if (!validOTP) {
       await this.authRepository.deleteSessionById(session.id);
-      await this.userRepository.deleteUserById(user.id);
       throw new Error('Verify OTP Failed');
     }
+    await this.userRepository.updateOtpUser(null, user.id);
     return this.authRepository.generateTokens(user);
   }
 

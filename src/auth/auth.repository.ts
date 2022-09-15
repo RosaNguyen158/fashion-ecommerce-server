@@ -58,17 +58,20 @@ export class AuthRepository {
   }
 
   async removeToken(id: string) {
-    const session = await this.sessionRepository.findOneBy({ id: id });
-    session.refreshToken = null;
-    session.accessToken = null;
-    return this.sessionRepository.save(session);
+    try {
+      await this.sessionRepository.update(id, {
+        accessToken: null,
+        refreshToken: null,
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   verifyRefreshToken(refreshToken: string) {
     const decodedId = this.jwtService.verify(refreshToken, {
       secret: process.env.JWT_REFRESH_SECRET,
     });
-
     return decodedId;
   }
 
@@ -125,7 +128,6 @@ export class AuthRepository {
     const session = await this.sessionRepository.findOneBy({
       accessToken: accessToken,
     });
-    console.log('find session', session);
     return session;
   }
 

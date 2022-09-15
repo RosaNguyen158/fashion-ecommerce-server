@@ -25,10 +25,10 @@ export class Session {
   @Column({ name: 'user_id' })
   userId: string;
 
-  @Column({ name: 'access_token' })
+  @Column({ name: 'access_token', nullable: true })
   accessToken: string;
 
-  @Column({ name: 'refresh_token' })
+  @Column({ name: 'refresh_token', nullable: true })
   refreshToken: string;
 
   @CreateDateColumn({ name: 'created_at' })

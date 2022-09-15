@@ -1,4 +1,12 @@
-import { Body, Controller, HttpStatus, Post, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { SignInUserDto } from './dto/signin-user.dto';
@@ -30,5 +38,11 @@ export class AuthController {
   ): Promise<{ accessToken: string }> {
     const result = await this.authService.signIn(signInUserDto);
     return result;
+  }
+
+  @Post('/logout')
+  async logout(@Req() req: Request): Promise<void> {
+    const token = req.headers['authorization'].split(' ')[1];
+    await this.authService.logout(token);
   }
 }
