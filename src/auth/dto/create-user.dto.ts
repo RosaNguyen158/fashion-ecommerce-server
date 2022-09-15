@@ -6,9 +6,9 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { UserRoles } from '../user-roles-enum';
+import { UserRoles } from 'src/users/user-roles-enum';
 
-export class AuthCredentialsDto {
+export class CreateUserDto {
   @IsString()
   firstname: string;
 

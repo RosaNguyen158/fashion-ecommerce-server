@@ -6,6 +6,8 @@ import { OrdersModule } from './orders/orders.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersModule } from './users/users.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -13,6 +15,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     ProductsModule,
     CartsModule,
     OrdersModule,
+    UsersModule,
     CategoriesModule,
     ConfigModule.forRoot({
       envFilePath: [`.env.stage.${process.env.STAGE}`],
@@ -33,6 +36,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         };
       },
     }),
+    MailModule,
   ],
 })
 export class AppModule {}

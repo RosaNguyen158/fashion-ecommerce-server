@@ -1,11 +1,13 @@
+import { Session } from 'src/auth/entities/session.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserRoles } from './user-roles-enum';
+import { UserRoles } from '../user-roles-enum';
 
 @Entity({ name: 'users' })
 export class User {
@@ -27,6 +29,9 @@ export class User {
   @Column({ name: 'phone', nullable: true })
   phone: string;
 
+  @Column({ name: 'otp', nullable: true })
+  otp: string;
+
   @Column({ name: 'default_address', nullable: true })
   defaultAddress: string;
 
@@ -35,6 +40,9 @@ export class User {
 
   @Column({ name: 'customer_stripe_id', nullable: true })
   customerStripeId: string;
+
+  @OneToMany(() => Session, (session) => session.user, { eager: true })
+  sessions: Session[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

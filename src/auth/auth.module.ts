@@ -4,12 +4,17 @@ import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { User } from './user.entity';
-import { UserRepository } from './users.repository';
+import { UsersModule } from 'src/users/users.module';
+import { AuthRepository } from './auth.repository';
+import { Session } from './entities/session.entity';
+import { JwtStrategy } from './jwt.strategy';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    UsersModule,
+    MailModule,
+    TypeOrmModule.forFeature([Session]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: 'topSecret51',
@@ -18,7 +23,8 @@ import { UserRepository } from './users.repository';
       },
     }),
   ],
+  providers: [AuthService, AuthRepository, JwtStrategy],
   controllers: [AuthController],
-  providers: [AuthService, UserRepository],
+  exports: [JwtStrategy, PassportModule],
 })
 export class AuthModule {}
