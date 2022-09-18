@@ -1,29 +1,42 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { SignInUserDto } from './dto/signin-user.dto';
 import { UserRepository } from 'src/users/users.repository';
 import { AuthRepository } from './auth.repository';
 import { User } from 'src/users/entities/user.entity';
 import { MailService } from 'src/mail/mail.service';
-import { Session } from './entities/session.entity';
+import { UsersService } from 'src/users/users.service';
+import { CartsRepository } from 'src/carts/carts.repository';
+import { Cart } from 'src/carts/entities/cart.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @Inject(forwardRef(() => UserRepository))
+    @Inject(forwardRef(() => CartsRepository))
     private userRepository: UserRepository,
     private authRepository: AuthRepository,
-    private jwtService: JwtService,
+    private cartsRepository: CartsRepository,
     private mailService: MailService,
   ) {}
 
-  async signUp(createUserDto: CreateUserDto): Promise<{ accessToken: string }> {
+  async signUp(
+    createUserDto: CreateUserDto,
+  ): Promise<{ accessToken: string; user: User }> {
     const user = await this.userRepository.createUser(createUserDto);
-    const otpUser = await this.mailService.sendUserConfirmation();
+    console.log('Sign up', user);
+    const userCart = await this.cartsRepository.createCart(user);
+    console.log(userCart);
+    // const otpUser = await this.mailService.sendUserConfirmation();
     const { accessToken } = await this.authRepository.createSession(user);
-    await this.userRepository.updateOtpUser(otpUser, user.id);
-    return { accessToken };
+    await this.userRepository.updateOtpUser('otpUser', user.id);
+    return { accessToken, user };
   }
 
   // async verifyOtpEmail(otp: string) {}
@@ -42,7 +55,7 @@ export class AuthService {
 
   async logout(accessToken: string): Promise<void> {
     try {
-      const session = await this.authRepository.findOneByToken(accessToken);
+      const { session } = await this.authRepository.findOneByToken(accessToken);
       const { id } = await this.authRepository.verifyRefreshToken(
         session.refreshToken,
       );
@@ -54,10 +67,9 @@ export class AuthService {
   }
 
   async verifyOtpEmail(otp: string, authHeaders: string) {
-    const token = authHeaders.split(' ')[1];
-    const session = await this.authRepository.findOneByToken(token);
-    if (!session) throw new Error('Not found user session');
-    const user = await this.userRepository.findOne(session.userId);
+    const { user, session } = await this.authRepository.findOneByToken(
+      authHeaders,
+    );
     const validOTP = await bcrypt.compare(`${otp}`, user.otp);
     if (!validOTP) {
       await this.authRepository.deleteSessionById(session.id);

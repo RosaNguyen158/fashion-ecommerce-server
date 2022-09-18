@@ -1,26 +1,24 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Req,
-  Res,
-} from '@nestjs/common';
+import { Body, Controller, Post, Req } from '@nestjs/common';
+import { Cart } from 'src/carts/entities/cart.entity';
+import { User } from 'src/users/entities/user.entity';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { SignInUserDto } from './dto/signin-user.dto';
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
+
   @Post('/signup')
-  signUp(
+  async signUp(
     @Body() authCredentialsDto: CreateUserDto,
-  ): Promise<{ accessToken: string }> {
-    return this.authService.signUp(authCredentialsDto);
+  ): Promise<{ accessToken: string; user: User }> {
+    const { accessToken, user } = await this.authService.signUp(
+      authCredentialsDto,
+    );
+    return { accessToken, user };
   }
 
-  @Post('/verifyOtpEmail')
+  @Post('/verify-otp-email')
   async verifyOtpEmail(
     @Body() otp: string,
     @Req() req: Request,

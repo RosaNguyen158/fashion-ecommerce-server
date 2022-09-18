@@ -9,12 +9,14 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/entities/user.entity';
 import { Session } from './entities/session.entity';
+import { UserRepository } from 'src/users/users.repository';
 
 @Injectable()
 export class AuthRepository {
   constructor(
     @InjectRepository(Session)
     private readonly sessionRepository: Repository<Session>,
+    private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -124,11 +126,17 @@ export class AuthRepository {
     }
   }
 
-  async findOneByToken(accessToken: string): Promise<Session> {
+  async findOneByToken(
+    authHeaders: string,
+  ): Promise<{ user: User; session: Session }> {
+    const token = authHeaders.split(' ')[1];
     const session = await this.sessionRepository.findOneBy({
-      accessToken: accessToken,
+      accessToken: token,
     });
-    return session;
+    if (!session) throw new Error('Not found user session');
+    const user = await this.userRepository.findOne(session.userId);
+
+    return { user, session };
   }
 
   async deleteSessionById(id: string): Promise<void> {

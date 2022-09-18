@@ -5,8 +5,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { PaymentMethod } from './payment-methods-enum';
-import { PaymentStatus } from './payment-status-enum';
+import { PaymentMethod } from '../payment-methods-enum';
+import { PaymentStatus } from '../payment-status-enum';
 
 @Entity({ name: 'orders' })
 export class Order {

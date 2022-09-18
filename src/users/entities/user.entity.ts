@@ -1,9 +1,12 @@
 import { Session } from 'src/auth/entities/session.entity';
+import { Cart } from 'src/carts/entities/cart.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -43,6 +46,10 @@ export class User {
 
   @OneToMany(() => Session, (session) => session.user, { eager: true })
   sessions: Session[];
+
+  @OneToOne(() => Cart, (cart) => cart.user)
+  @JoinColumn()
+  cart: Cart;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
