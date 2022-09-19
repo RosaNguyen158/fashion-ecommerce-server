@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cart } from './entities/cart.entity';
 import { User } from 'src/users/entities/user.entity';
+import { CartDetail } from './entities/cart-detail.entity';
 
 @Injectable()
 export class CartsRepository {
@@ -12,26 +13,42 @@ export class CartsRepository {
   ) {}
 
   async createCart(user: User): Promise<Cart> {
-    console.log(user);
-    const newCategory = await this.cartsRepository.create({
-      // user: user,
-      user_info: user,
+    console.log('create cart', user);
+    const newCart = await this.cartsRepository.create({
+      user: user,
     });
-    await this.cartsRepository.save(newCategory);
-    console.log(newCategory);
-    // try {
-    //   await this.cartsRepository.save(newCategory);
-    //   console.log(newCategory);
-    // } catch (error) {
-    //   if (error.code === '23505') throw new Error(error);
-    // }
-    return newCategory;
+    console.log(newCart);
+    await this.cartsRepository.save(newCart);
+    const cart = await this.cartsRepository.findOne({
+      relations: {
+        user: true,
+      },
+      where: {
+        user: {
+          id: user.id,
+        },
+      },
+    });
+    console.log('cart 1', cart);
+    return cart;
   }
 
-  async checkExistedCart(user: User): Promise<boolean> {
-    const userCart = await this.cartsRepository.findOneBy({ user: user });
+  async listCart(): Promise<Cart[]> {
+    const listCart = await this.cartsRepository.find();
+    return listCart;
+  }
 
-    if (!userCart) return false;
-    return true;
+  async checkExistedCart(user: User): Promise<Cart> {
+    const cart = await this.cartsRepository.findOne({
+      relations: {
+        user: true,
+      },
+      where: {
+        user: {
+          id: user.id,
+        },
+      },
+    });
+    return cart;
   }
 }

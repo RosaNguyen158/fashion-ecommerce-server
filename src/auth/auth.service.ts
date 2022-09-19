@@ -29,13 +29,12 @@ export class AuthService {
   async signUp(
     createUserDto: CreateUserDto,
   ): Promise<{ accessToken: string; user: User }> {
-    const user = await this.userRepository.createUser(createUserDto);
-    console.log('Sign up', user);
-    const userCart = await this.cartsRepository.createCart(user);
-    console.log(userCart);
+    const newUser = await this.userRepository.createUser(createUserDto);
+    await this.userRepository.updateOtpUser('otpUser', newUser.id);
+    const { accessToken } = await this.authRepository.createSession(newUser);
+    const { user } = await this.authRepository.findOneByToken(accessToken);
+    await this.cartsRepository.createCart(user);
     // const otpUser = await this.mailService.sendUserConfirmation();
-    const { accessToken } = await this.authRepository.createSession(user);
-    await this.userRepository.updateOtpUser('otpUser', user.id);
     return { accessToken, user };
   }
 

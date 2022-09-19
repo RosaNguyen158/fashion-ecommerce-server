@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoriesRepository } from 'src/categories/categories.repository';
-import { Repository } from 'typeorm';
+import { Between, FindOptionsOrderValue, In, Like, Repository } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
 import { Product } from './entities/product.entity';
 
@@ -17,7 +17,7 @@ export class ProductsRepository {
     private readonly categoriesRepository: CategoriesRepository,
   ) {}
 
-  async createCategoty(createProductDto: CreateProductDto): Promise<Product> {
+  async createProduct(createProductDto: CreateProductDto): Promise<Product> {
     const { categoryName, name, price, description, productImage } =
       createProductDto;
 
@@ -55,7 +55,90 @@ export class ProductsRepository {
         `There is no category under id ${findProduct}`,
       );
     }
-
     return findProduct;
+  }
+
+  async filterProductByName(
+    name: string,
+    listProduct: Product[],
+  ): Promise<Product[]> {
+    const listProductInName = await this.productsRepository.find({
+      where: {
+        name: Like(`%${name}%`),
+        id: In([...listProduct.map((product) => product.id)]),
+      },
+    });
+
+    if (!listProductInName) {
+      throw new NotFoundException(
+        `There is no category under id ${listProductInName}`,
+      );
+    }
+    return listProductInName;
+  }
+
+  async filterProductByCategory(
+    categoryName: string,
+    listProduct: Product[],
+  ): Promise<Product[]> {
+    const listProductInCategory = await this.productsRepository.find({
+      where: {
+        id: In([...listProduct.map((product) => product.id)]),
+        category: {
+          category: categoryName,
+        },
+      },
+    });
+
+    if (!listProductInCategory) {
+      throw new NotFoundException(
+        `There is no category under id ${listProductInCategory}`,
+      );
+    }
+    return listProductInCategory;
+  }
+  async filterProductByPrice(
+    price: number,
+    order: FindOptionsOrderValue,
+    listProduct: Product[],
+  ): Promise<Product[]> {
+    const listProductInPrice = await this.productsRepository.find({
+      where: {
+        price: price,
+        id: In([...listProduct.map((product) => product.id)]),
+      },
+      order: {
+        price: order,
+      },
+    });
+
+    if (!listProductInPrice) {
+      throw new NotFoundException(
+        `There is no category under id ${listProductInPrice}`,
+      );
+    }
+
+    return listProductInPrice;
+  }
+
+  async filterProductByPriceRange(
+    value1: number,
+    value2: number,
+    listProduct: Product[],
+  ): Promise<Product[]> {
+    const listProductInPrice = await this.productsRepository.find({
+      where: {
+        price: Between(value1, value2),
+        id: In([...listProduct.map((product) => product.id)]),
+      },
+    });
+
+    if (!listProductInPrice) {
+      throw new NotFoundException(
+        `There is no category under id ${listProductInPrice}`,
+      );
+    }
+
+    return listProductInPrice;
   }
 }

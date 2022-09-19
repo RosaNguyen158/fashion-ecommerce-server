@@ -1,24 +1,48 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cart } from './entities/cart.entity';
 import { Product } from 'src/products/entities/product.entity';
 import { CartDetail } from './entities/cart-detail.entity';
+import { ProductsRepository } from 'src/products/products.repository';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class CartDetailsRepository {
   constructor(
     @InjectRepository(CartDetail)
+    @Inject(forwardRef(() => ProductsRepository))
     private readonly cartdetailsRepository: Repository<CartDetail>,
+    private readonly productsRepository: ProductsRepository,
   ) {}
 
-  async findProductInCart(cart: Cart, product: Product): Promise<CartDetail> {
+  async findProductInCart(
+    cart: Cart,
+    productName: string,
+  ): Promise<{ productInfo: Product; findProduct: CartDetail }> {
     try {
-      const findProduct = await this.cartdetailsRepository.findOneBy({
-        cart: cart,
-        product: product,
+      const productInfo = await this.productsRepository.findProductByName(
+        productName,
+      );
+      console.log(productInfo);
+
+      const findProduct = await this.cartdetailsRepository.findOne({
+        relations: {
+          product: true,
+          cart: true,
+        },
+        where: {
+          cart: {
+            id: cart.id,
+          },
+          product: {
+            id: productInfo.id,
+          },
+        },
       });
-      return findProduct;
+      console.log(findProduct);
+
+      return { productInfo, findProduct };
     } catch (error) {
       return;
     }
@@ -26,24 +50,29 @@ export class CartDetailsRepository {
 
   async addProductToCart(
     cart: Cart,
-    product: Product,
+    productName: string,
     quantity: number,
   ): Promise<CartDetail> {
-    const findProduct = await this.findProductInCart(cart, product);
+    const { productInfo, findProduct } = await this.findProductInCart(
+      cart,
+      productName,
+    );
+    const product = findProduct;
     let addProduct: CartDetail;
     if (!findProduct) {
       addProduct = await this.cartdetailsRepository.create({
         cart: cart,
         quantity: quantity,
-        product: product,
+        product: productInfo,
       });
+      await this.cartdetailsRepository.save(addProduct);
     } else {
-      await this.cartdetailsRepository.update(findProduct.id, {
-        quantity: quantity + 1,
+      await this.cartdetailsRepository.update(product.id, {
+        quantity: product.quantity + quantity,
       });
-      addProduct = await this.findProductInCart(cart, product);
+      const { findProduct } = await this.findProductInCart(cart, productName);
+      addProduct = findProduct;
     }
-
     return addProduct;
   }
 }

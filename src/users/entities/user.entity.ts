@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { Session } from 'src/auth/entities/session.entity';
 import { Cart } from 'src/carts/entities/cart.entity';
 import {
@@ -45,10 +46,12 @@ export class User {
   customerStripeId: string;
 
   @OneToMany(() => Session, (session) => session.user, { eager: true })
+  @Exclude({
+    toPlainOnly: true,
+  })
   sessions: Session[];
 
   @OneToOne(() => Cart, (cart) => cart.user)
-  @JoinColumn()
   cart: Cart;
 
   @CreateDateColumn({ name: 'created_at' })
