@@ -25,7 +25,7 @@ export class ProductsRepository {
       categoryName,
     );
 
-    const product = this.productsRepository.create({
+    const product = await this.productsRepository.create({
       name: name,
       price: price,
       description: description,
@@ -51,9 +51,17 @@ export class ProductsRepository {
     });
 
     if (!findProduct) {
-      throw new NotFoundException(
-        `There is no category under id ${findProduct}`,
-      );
+      throw new NotFoundException(`There is no product under name ${product}`);
+    }
+    return findProduct;
+  }
+  async findProductByID(id: string): Promise<Product> {
+    const findProduct = await this.productsRepository.findOneBy({
+      id: id,
+    });
+
+    if (!findProduct) {
+      throw new NotFoundException(`There is no product under id ${id}`);
     }
     return findProduct;
   }
@@ -65,7 +73,7 @@ export class ProductsRepository {
     const listProductInName = await this.productsRepository.find({
       where: {
         name: Like(`%${name}%`),
-        id: In([...listProduct.map((product) => product.id)]),
+        id: In([...listProduct.map((product) => product.id)]), // filter
       },
     });
 

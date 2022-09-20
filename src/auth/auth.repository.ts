@@ -4,6 +4,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -31,7 +32,7 @@ export class AuthRepository {
       await this.sessionRepository.save(session);
       return session;
     } catch (error) {
-      throw new Error(error);
+      throw new NotFoundException(error.message);
     }
   }
 
@@ -47,7 +48,7 @@ export class AuthRepository {
       });
       return true;
     } catch (error) {
-      throw new Error(error);
+      throw new NotFoundException(error.message);
     }
   }
 
@@ -66,7 +67,7 @@ export class AuthRepository {
         refreshToken: null,
       });
     } catch (error) {
-      throw new Error(error);
+      throw new NotFoundException(error.message);
     }
   }
 

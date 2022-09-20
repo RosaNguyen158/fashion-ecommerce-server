@@ -2,12 +2,15 @@ import { Exclude } from 'class-transformer';
 import { CartDetail } from 'src/carts/entities/cart-detail.entity';
 import { Cart } from 'src/carts/entities/cart.entity';
 import { Category } from 'src/categories/entities/category.entity';
+import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -38,10 +41,14 @@ export class Product {
   })
   category: Category;
 
-  @OneToMany(() => CartDetail, (cartDetail) => cartDetail.product, {
-    eager: true,
-  })
-  cartDetails: CartDetail[];
+  // @OneToMany(() => CartDetail, (cartDetail) => cartDetail.product, {
+  //   eager: true,
+  // })
+  // cartDetails: CartDetail[];
+
+  @OneToOne(() => CartDetail, (cartDetail) => cartDetail.product)
+  @JoinColumn()
+  cartDetails: CartDetail;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

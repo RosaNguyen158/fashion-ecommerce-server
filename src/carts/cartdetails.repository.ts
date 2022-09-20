@@ -1,4 +1,10 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotAcceptableException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cart } from './entities/cart.entity';
@@ -6,6 +12,7 @@ import { Product } from 'src/products/entities/product.entity';
 import { CartDetail } from './entities/cart-detail.entity';
 import { ProductsRepository } from 'src/products/products.repository';
 import { User } from 'src/users/entities/user.entity';
+import { response } from 'express';
 
 @Injectable()
 export class CartDetailsRepository {
@@ -24,7 +31,6 @@ export class CartDetailsRepository {
       const productInfo = await this.productsRepository.findProductByName(
         productName,
       );
-      console.log(productInfo);
 
       const findProduct = await this.cartdetailsRepository.findOne({
         relations: {
@@ -40,11 +46,10 @@ export class CartDetailsRepository {
           },
         },
       });
-      console.log(findProduct);
 
       return { productInfo, findProduct };
     } catch (error) {
-      return;
+      throw new NotFoundException(error.message);
     }
   }
 

@@ -1,5 +1,4 @@
 import { Controller, Post, Req } from '@nestjs/common';
-import { Cart } from 'src/carts/entities/cart.entity';
 import { CartsService } from './carts.service';
 import { CartDetail } from './entities/cart-detail.entity';
 @Controller('cart')

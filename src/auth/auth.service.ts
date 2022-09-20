@@ -2,6 +2,7 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  NotAcceptableException,
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
@@ -61,7 +62,7 @@ export class AuthService {
       console.log(id);
       await this.authRepository.removeToken(session.id);
     } catch (e) {
-      throw new Error(e);
+      throw new NotAcceptableException(e);
     }
   }
 
@@ -72,7 +73,7 @@ export class AuthService {
     const validOTP = await bcrypt.compare(`${otp}`, user.otp);
     if (!validOTP) {
       await this.authRepository.deleteSessionById(session.id);
-      throw new Error('Verify OTP Failed');
+      throw new NotAcceptableException('Verify OTP Failed');
     }
     await this.userRepository.updateOtpUser(null, user.id);
     return this.authRepository.generateTokens(user);

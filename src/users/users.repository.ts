@@ -68,7 +68,7 @@ export class UserRepository {
     try {
       await this.userRepository.update(id, { otp: value });
     } catch (error) {
-      throw new Error(error);
+      throw new NotFoundException(error.message);
     }
   }
 
