@@ -1,5 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { AuthRepository } from 'src/auth/auth.repository';
+import { CartDetailsRepository } from 'src/carts/cartdetails.repository';
 import { CartsRepository } from 'src/carts/carts.repository';
 import { ProductsRepository } from 'src/products/products.repository';
 import { UserRepository } from 'src/users/users.repository';
@@ -15,8 +16,8 @@ export class OrdersService {
     @Inject(forwardRef(() => AuthRepository))
     @Inject(forwardRef(() => UserRepository))
     private authRepository: AuthRepository,
-    private UsersRepository: UserRepository,
     private OrdersRepository: OrdersRepository,
+    private cartDetailsRepository: CartDetailsRepository,
     private ProductsRepository: ProductsRepository,
     private OrderDetailsRepository: OrderDetailsRepository,
   ) {}
@@ -25,24 +26,36 @@ export class OrdersService {
     token: string,
     paymentMethod: PaymentMethod,
     paymentStatus: PaymentStatus,
-    productOrders: string,
+    productOrders: string[],
   ): Promise<Order> {
     const { user } = await this.authRepository.findOneByToken(token);
-    let total = 0;
-    Object.values(productOrders).map(async (value) => {
-      const product = await this.ProductsRepository.findProductByID(value);
-      total += product.price;
-    });
+    const totalOrder = await productOrders.reduce(async (total, value) => {
+      const { cartDetail, product } =
+        await this.cartDetailsRepository.findCartDetail(value);
+      const totalPrice = 0;
+      const totalQuantity = 0;
+      return {
+        total: totalPrice + Number(product.price),
+        quantity: totalQuantity + Number(cartDetail.quantity),
+      };
+    }, Promise.resolve({ total: 0, quantity: 0 })); // To use async in reduce
+
     const newOrder = await this.OrdersRepository.createOrder(
       user,
       paymentMethod,
       paymentStatus,
-      total,
+      totalOrder.total,
     );
 
     Object.values(productOrders).map(async (value) => {
-      const product = await this.ProductsRepository.findProductByID(value);
-      await this.OrderDetailsRepository.createOrderDetail(product, newOrder);
+      const { cartDetail, product } =
+        await this.cartDetailsRepository.findCartDetail(value);
+      const result = await this.OrderDetailsRepository.createOrderDetail(
+        product,
+        newOrder,
+        cartDetail.quantity,
+      );
+      console.log('result', result);
     });
 
     const order = await this.OrdersRepository.findOrder(newOrder.id);

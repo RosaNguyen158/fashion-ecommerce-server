@@ -42,19 +42,19 @@ export class Order {
   @Column({ name: 'payment_status', nullable: true })
   paymentStatus: PaymentStatus;
 
-  @ManyToOne(() => User, (user) => user.sessions, { eager: false })
+  @ManyToOne(() => User, (user) => user.orders, { eager: false })
   @Exclude({
     toPlainOnly: true,
   })
   user: User;
 
-  @OneToMany(() => OrderDetail, (order_details) => order_details.order, {
+  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.order, {
     eager: true,
   })
-  @Exclude({
-    toPlainOnly: true,
-  })
-  order_details: OrderDetail[];
+  // @Exclude({
+  //   toPlainOnly: true,
+  // })
+  orderDetails: OrderDetail[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

@@ -66,6 +66,21 @@ export class ProductsRepository {
     return findProduct;
   }
 
+  async findProductByCartID(id: string): Promise<Product> {
+    const findProduct = await this.productsRepository.findOne({
+      relations: { cartDetails: true },
+      where: {
+        cartDetails: {
+          id: id,
+        },
+      },
+    });
+    if (!findProduct) {
+      throw new NotFoundException(`Product is not existed in cart`);
+    }
+    return findProduct;
+  }
+
   async filterProductByName(
     name: string,
     listProduct: Product[],

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cart } from './entities/cart.entity';
@@ -13,24 +13,25 @@ export class CartsRepository {
   ) {}
 
   async createCart(user: User): Promise<Cart> {
-    console.log('create cart', user);
     const newCart = await this.cartsRepository.create({
       user: user,
     });
-    console.log(newCart);
-    await this.cartsRepository.save(newCart);
-    const cart = await this.cartsRepository.findOne({
-      relations: {
-        user: true,
-      },
-      where: {
-        user: {
-          id: user.id,
+    try {
+      await this.cartsRepository.save(newCart);
+      const cart = await this.cartsRepository.findOne({
+        relations: {
+          user: true,
         },
-      },
-    });
-    console.log('cart 1', cart);
-    return cart;
+        where: {
+          user: {
+            id: user.id,
+          },
+        },
+      });
+      return cart;
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
   async listCart(): Promise<Cart[]> {

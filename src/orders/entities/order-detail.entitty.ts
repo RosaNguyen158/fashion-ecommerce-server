@@ -14,7 +14,7 @@ export class OrderDetail {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Order, (order) => order.order_details, { eager: false })
+  @ManyToOne(() => Order, (order) => order.orderDetails, { eager: false })
   @Exclude({
     toPlainOnly: true,
     // Not show information about user's sessions when return result ,
@@ -22,7 +22,7 @@ export class OrderDetail {
   })
   order: Order;
 
-  @OneToOne(() => Product, (product) => product.cartDetails)
+  @ManyToOne(() => Product, (product) => product.orderDetails)
   product: Product;
 
   @Column({ type: 'jsonb', nullable: true })

@@ -27,8 +27,11 @@ export class Cart {
   @JoinColumn()
   user: User;
 
-  @OneToMany(() => CartDetail, (cart_details) => cart_details.cart, {
-    eager: true,
+  @OneToMany(() => CartDetail, (cart_detail) => cart_detail.cart, {
+    eager: false,
+  })
+  @Exclude({
+    toPlainOnly: true,
   })
   cart_details: CartDetail[];
 }

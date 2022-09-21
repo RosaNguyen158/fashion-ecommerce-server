@@ -9,6 +9,7 @@ import { OrderDetailsRepository } from './orderDetails.repository';
 import { AuthModule } from 'src/auth/auth.module';
 import { ProductsModule } from 'src/products/products.module';
 import { OrdersRepository } from './orders.repository';
+import { CartsModule } from 'src/carts/carts.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { OrdersRepository } from './orders.repository';
     forwardRef(() => UsersModule),
     forwardRef(() => AuthModule),
     forwardRef(() => ProductsModule),
+    forwardRef(() => CartsModule),
   ],
   providers: [OrdersService, OrdersRepository, OrderDetailsRepository],
   controllers: [OrdersController],

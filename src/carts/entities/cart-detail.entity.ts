@@ -5,7 +5,6 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -22,9 +21,9 @@ export class CartDetail {
   // })
   cart: Cart;
 
+  //   toPlainOnly: true, { eager: false },
   @ManyToOne(() => Product, (product) => product.cartDetails, { eager: false })
   // @Exclude({
-  //   toPlainOnly: true,
   // })
   product: Product;
 

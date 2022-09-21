@@ -15,6 +15,7 @@ import { MailService } from 'src/mail/mail.service';
 import { UsersService } from 'src/users/users.service';
 import { CartsRepository } from 'src/carts/carts.repository';
 import { Cart } from 'src/carts/entities/cart.entity';
+import { JwtPayload } from './user-payload.interface';
 
 @Injectable()
 export class AuthService {

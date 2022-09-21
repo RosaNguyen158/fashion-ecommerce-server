@@ -8,6 +8,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   OneToOne,
@@ -41,14 +42,21 @@ export class Product {
   })
   category: Category;
 
-  // @OneToMany(() => CartDetail, (cartDetail) => cartDetail.product, {
-  //   eager: true,
+  @OneToMany(() => CartDetail, (cartDetail) => cartDetail.product, {
+    eager: true,
+  })
+  // @Exclude({
+  //   toPlainOnly: true,
   // })
-  // cartDetails: CartDetail[];
+  cartDetails: CartDetail[];
 
-  @OneToOne(() => CartDetail, (cartDetail) => cartDetail.product)
-  @JoinColumn()
-  cartDetails: CartDetail;
+  @OneToMany(() => CartDetail, (orderDetail) => orderDetail.product, {
+    eager: true,
+  })
+  // @Exclude({
+  //   toPlainOnly: true,
+  // })
+  orderDetails: CartDetail[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

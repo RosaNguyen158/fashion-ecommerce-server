@@ -1,11 +1,5 @@
-import {
-  Injectable,
-  NotAcceptableException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { NotFoundError } from 'rxjs';
-import { Cart } from 'src/carts/entities/cart.entity';
 import { Product } from 'src/products/entities/product.entity';
 import { Repository } from 'typeorm';
 import { OrderDetail } from './entities/order-detail.entitty';
@@ -18,10 +12,12 @@ export class OrderDetailsRepository {
     private readonly orderDetailsRepository: Repository<OrderDetail>,
   ) {}
 
-  async createOrderDetail(product: Product, order: Order) {
-    const newOrderDetail = await this.orderDetailsRepository.create({
+  async createOrderDetail(product: Product, order: Order, quantity: number) {
+    const newOrderDetail = this.orderDetailsRepository.create({
       product: product,
       order: order,
+      quantity: quantity,
+      productInfo: product,
     });
     try {
       await this.orderDetailsRepository.save(newOrderDetail);

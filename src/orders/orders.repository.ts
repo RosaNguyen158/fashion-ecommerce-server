@@ -1,4 +1,4 @@
-import { Injectable, NotAcceptableException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
@@ -22,12 +22,10 @@ export class OrdersRepository {
     total: number,
   ): Promise<Order> {
     let cost: number;
-    let shippingCost: ShippingCost;
-    const amount = total + cost;
     user.province == 'HN' || user.province == 'HCM' ? (cost = 20) : (cost = 30);
-    console.log(user);
+    const amount = total + cost;
 
-    const newOrder = await this.ordersRepository.create({
+    const newOrder = this.ordersRepository.create({
       shippingProvince: user.province,
       shippingDistrict: user.district,
       shippingPhone: user.phone,
@@ -36,13 +34,14 @@ export class OrdersRepository {
       paymentMethod: paymentMethod,
       paymentStatus: paymentStatus,
       orderAmount: amount,
+      user: user,
     });
     try {
       await this.ordersRepository.save(newOrder);
+      return newOrder;
     } catch (error) {
-      throw new NotAcceptableException(error.message);
+      throw new NotFoundException(error.message);
     }
-    return newOrder;
   }
 
   async updateOrder(
