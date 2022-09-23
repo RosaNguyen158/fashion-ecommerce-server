@@ -72,6 +72,14 @@ export class UserRepository {
     }
   }
 
+  async updateStripeIdUser(value: string, id: string): Promise<void> {
+    try {
+      await this.userRepository.update(id, { customerStripeId: value });
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
+  }
+
   async deleteUserById(id: string): Promise<void> {
     const result = await this.userRepository.delete({ id: id });
 

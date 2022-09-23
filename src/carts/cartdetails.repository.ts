@@ -28,7 +28,6 @@ export class CartDetailsRepository {
       const cartDetail = await this.cartdetailsRepository.findOne({
         where: { id: cartId },
       });
-
       const product = await this.productsRepository.findProductByCartID(cartId);
       return { cartDetail, product };
     } catch (error) {

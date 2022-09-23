@@ -46,6 +46,9 @@ export class AddressesRepository {
           isDefault: true,
         },
       });
+      if (!address) {
+        throw new NotFoundException('You dont have address');
+      }
       return address;
     } catch (error) {
       throw new NotFoundException('You dont have address');

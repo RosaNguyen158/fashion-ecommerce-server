@@ -19,7 +19,7 @@ export class OrdersController {
       user,
       req.body['paymentMethod'],
       req.body['paymentStatus'],
-      req.body['productOrders'],
+      req.body['cartId'],
     );
     return createOrder;
   }

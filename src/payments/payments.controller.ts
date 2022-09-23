@@ -1,25 +1,37 @@
-// import { Controller, Get, Inject } from '@nestjs/common';
-// import { STRIPE_CLIENT } from '../stripe/constants';
-// import Stripe from 'stripe';
-
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/decorators/get-user.decorator';
+import { Order } from 'src/orders/entities/order.entity';
+import { User } from 'src/users/entities/user.entity';
+import Stripe from 'stripe';
+import { CreateCardDto } from './dto/create-cart.dto';
 import { PaymentsService } from './payments.service';
 
 @Controller('payment')
+@UseGuards(AuthGuard())
 export class PaymentsController {
   constructor(private paymentsService: PaymentsService) {}
 
-  @Post('/create-checkout-session')
-  async createCheckout() {
-    return this.paymentsService.createPayments();
+  @Post('/create-new-customer')
+  async createNewCustomer(@GetUser() user: User): Promise<Stripe.Customer> {
+    const customer = await this.paymentsService.createNewCustomer(user);
+    return customer;
   }
 
-  //   @Post('/create-payment-intent')
-  //   async createPaymentIntent() {
-  //     return this.paymentsService.paymentIntent();
-  //   }
-  @Post('/chagre-order')
-  async chagreOrder() {
-    return this.paymentsService.paymentChagre();
+  @Post('/create-new-card')
+  async createNewCard(
+    @GetUser() user: User,
+    @Body() createCardDto: CreateCardDto,
+  ): Promise<Stripe.CustomerSource> {
+    return await this.paymentsService.createCard(createCardDto, user);
+  }
+
+  @Post('/create-new-charge')
+  async createNewCharge(
+    @GetUser() user: User,
+    @Body() orderId: string,
+    @Body() cardId: string,
+  ) {
+    return await this.paymentsService.createNewCharge(user, orderId, cardId);
   }
 }
