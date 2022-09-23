@@ -30,6 +30,7 @@ export class CartsRepository {
       });
       return cart;
     } catch (error) {
+      console.log(error);
       throw new NotFoundException(error.message);
     }
   }

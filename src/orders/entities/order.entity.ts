@@ -1,11 +1,14 @@
 import { Exclude } from 'class-transformer';
+import { Payment } from 'src/payments/entities/payment.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -55,6 +58,9 @@ export class Order {
   //   toPlainOnly: true,
   // })
   orderDetails: OrderDetail[];
+
+  @OneToOne(() => Payment, (payment) => payment.order)
+  payment: Payment;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

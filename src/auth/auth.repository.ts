@@ -21,7 +21,11 @@ export class AuthRepository {
     private readonly jwtService: JwtService,
   ) {}
 
-  async setRefreshToken(refreshToken: string, accessToken: string, user: User) {
+  async setRefreshToken(
+    refreshToken: string,
+    accessToken: string,
+    user: User,
+  ): Promise<Session> {
     const session = this.sessionRepository.create({
       accessToken: accessToken,
       refreshToken: refreshToken,
@@ -40,19 +44,18 @@ export class AuthRepository {
     refreshToken: string,
     accessToken: string,
     id: string,
-  ) {
+  ): Promise<void> {
     try {
       await this.sessionRepository.update(id, {
         accessToken: accessToken,
         refreshToken: refreshToken,
       });
-      return true;
     } catch (error) {
       throw new NotFoundException(error.message);
     }
   }
 
-  async getRefreshToken(id: string) {
+  async getRefreshToken(id: string): Promise<string> {
     const session = await this.sessionRepository.findOneBy({ id: id });
 
     const token = session.refreshToken;
@@ -102,13 +105,13 @@ export class AuthRepository {
     return { accessToken, refreshToken };
   }
 
-  async createSession(user: User) {
+  async createSession(user: User): Promise<Session> {
     const { refreshToken, accessToken } = await this.generateTokens(user);
     const session = this.setRefreshToken(accessToken, refreshToken, user);
     return session;
   }
 
-  async updateSession(id: string, user: User) {
+  async updateSession(id: string, user: User): Promise<string> {
     const { refreshToken, accessToken } = await this.generateTokens(user);
     await this.resetRefreshToken(accessToken, refreshToken, id);
     return accessToken;

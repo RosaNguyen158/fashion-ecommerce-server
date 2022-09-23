@@ -10,12 +10,14 @@ import { Session } from './entities/session.entity';
 import { JwtStrategy } from './jwt.strategy';
 import { MailModule } from 'src/mail/mail.module';
 import { CartsModule } from 'src/carts/carts.module';
+import { AddressesModule } from 'src/addresses/addresses.module';
 
 @Module({
   imports: [
     MailModule,
     forwardRef(() => UsersModule),
     forwardRef(() => CartsModule),
+    forwardRef(() => AddressesModule),
     TypeOrmModule.forFeature([Session]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({

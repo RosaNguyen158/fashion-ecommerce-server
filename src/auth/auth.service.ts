@@ -16,15 +16,19 @@ import { UsersService } from 'src/users/users.service';
 import { CartsRepository } from 'src/carts/carts.repository';
 import { Cart } from 'src/carts/entities/cart.entity';
 import { JwtPayload } from './user-payload.interface';
+import { AddressesRepository } from 'src/addresses/addresses.repository';
+import { AddAddressDto } from 'src/addresses/dto/add-address.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject(forwardRef(() => UserRepository))
     @Inject(forwardRef(() => CartsRepository))
+    @Inject(forwardRef(() => AddressesRepository))
     private userRepository: UserRepository,
     private authRepository: AuthRepository,
     private cartsRepository: CartsRepository,
+    private addresesRepository: AddressesRepository,
     private mailService: MailService,
   ) {}
 
@@ -32,6 +36,7 @@ export class AuthService {
     createUserDto: CreateUserDto,
   ): Promise<{ accessToken: string; user: User }> {
     const newUser = await this.userRepository.createUser(createUserDto);
+    await this.addresesRepository.addAddress(null, newUser);
     await this.userRepository.updateOtpUser('otpUser', newUser.id);
     const { accessToken } = await this.authRepository.createSession(newUser);
     const { user } = await this.authRepository.findOneByToken(accessToken);
@@ -39,8 +44,6 @@ export class AuthService {
     // const otpUser = await this.mailService.sendUserConfirmation();
     return { accessToken, user };
   }
-
-  // async verifyOtpEmail(otp: string) {}
 
   async signIn(
     signInUserDto: SignInUserDto,
@@ -68,12 +71,9 @@ export class AuthService {
   }
 
   async verifyOtpEmail(otp: string, authHeaders: string) {
-    const { user, session } = await this.authRepository.findOneByToken(
-      authHeaders,
-    );
+    const { user } = await this.authRepository.findOneByToken(authHeaders);
     const validOTP = await bcrypt.compare(`${otp}`, user.otp);
     if (!validOTP) {
-      await this.authRepository.deleteSessionById(session.id);
       throw new NotAcceptableException('Verify OTP Failed');
     }
     await this.userRepository.updateOtpUser(null, user.id);

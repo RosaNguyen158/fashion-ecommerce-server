@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { AddressesRepository } from 'src/addresses/addresses.repository';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { UpdateAddressOrderDto } from './dto/update-address-order.dto';
@@ -13,6 +14,7 @@ export class OrdersRepository {
   constructor(
     @InjectRepository(Order)
     private readonly ordersRepository: Repository<Order>,
+    private addressesRepository: AddressesRepository,
   ) {}
 
   async createOrder(
@@ -22,14 +24,18 @@ export class OrdersRepository {
     total: number,
   ): Promise<Order> {
     let cost: number;
-    user.province == 'HN' || user.province == 'HCM' ? (cost = 20) : (cost = 30);
+    const addressDefault =
+      await this.addressesRepository.findAddressDefaultByUser(user);
+    addressDefault.province == 'HN' || addressDefault.province == 'HCM'
+      ? (cost = 20)
+      : (cost = 30);
     const amount = total + cost;
 
     const newOrder = this.ordersRepository.create({
-      shippingProvince: user.province,
-      shippingDistrict: user.district,
+      shippingProvince: addressDefault.province,
+      shippingDistrict: addressDefault.district,
       shippingPhone: user.phone,
-      detailAddress: user.detailAddress,
+      detailAddress: addressDefault.addressDetail,
       shippingCost: cost,
       paymentMethod: paymentMethod,
       paymentStatus: paymentStatus,

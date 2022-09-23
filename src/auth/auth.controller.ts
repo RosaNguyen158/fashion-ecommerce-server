@@ -38,9 +38,9 @@ export class AuthController {
     return result;
   }
 
-  @Post('/logout')
-  async logout(@Req() req: Request): Promise<void> {
-    const token = req.headers['authorization'].split(' ')[1];
-    await this.authService.logout(token);
-  }
+  // @Post('/logout')
+  // async logout(@Req() req: Request): Promise<void> {
+  //   const token = req.headers['authorization'].split(' ')[1];
+  //   await this.authService.logout(token);
+  // }
 }

@@ -1,8 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { AuthRepository } from 'src/auth/auth.repository';
 import { CartDetailsRepository } from 'src/carts/cartdetails.repository';
-import { CartsRepository } from 'src/carts/carts.repository';
-import { ProductsRepository } from 'src/products/products.repository';
+import { User } from 'src/users/entities/user.entity';
 import { UserRepository } from 'src/users/users.repository';
 import { Order } from './entities/order.entity';
 import { PaymentMethod } from './enum/payment-methods-enum';
@@ -13,22 +11,18 @@ import { OrdersRepository } from './orders.repository';
 @Injectable()
 export class OrdersService {
   constructor(
-    @Inject(forwardRef(() => AuthRepository))
     @Inject(forwardRef(() => UserRepository))
-    private authRepository: AuthRepository,
     private OrdersRepository: OrdersRepository,
     private cartDetailsRepository: CartDetailsRepository,
-    private ProductsRepository: ProductsRepository,
     private OrderDetailsRepository: OrderDetailsRepository,
   ) {}
 
   async createOrder(
-    token: string,
+    user: User,
     paymentMethod: PaymentMethod,
     paymentStatus: PaymentStatus,
     productOrders: string[],
   ): Promise<Order> {
-    const { user } = await this.authRepository.findOneByToken(token);
     const totalOrder = await productOrders.reduce(async (total, value) => {
       const { cartDetail, product } =
         await this.cartDetailsRepository.findCartDetail(value);

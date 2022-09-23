@@ -1,4 +1,5 @@
 import { Exclude } from 'class-transformer';
+import { Address } from 'src/addresses/entity/address.entity';
 import { Session } from 'src/auth/entities/session.entity';
 import { Cart } from 'src/carts/entities/cart.entity';
 import { Order } from 'src/orders/entities/order.entity';
@@ -6,7 +7,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -37,20 +37,17 @@ export class User {
   @Column({ name: 'otp', nullable: true })
   otp: string;
 
-  @Column({ name: 'province', nullable: true })
-  province: string;
-
-  @Column({ name: 'district', nullable: true })
-  district: string;
-
-  @Column({ name: 'detail_address', nullable: true })
-  detailAddress: string;
-
   @Column({ name: 'role' })
   role: UserRoles;
 
   @Column({ name: 'customer_stripe_id', nullable: true })
   customerStripeId: string;
+
+  @OneToMany(() => Address, (address) => address.user, { eager: true })
+  @Exclude({
+    toPlainOnly: true,
+  })
+  address: Address[];
 
   @OneToMany(() => Session, (session) => session.user, { eager: true })
   @Exclude({
