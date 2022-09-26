@@ -13,13 +13,13 @@ export class Order {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'shipping_address' })
+  @Column({ name: 'shipping_address', nullable: true })
   shippingAddress: string;
 
-  @Column({ name: 'shipping_phone', type: 'int' })
+  @Column({ name: 'shipping_phone', type: 'int', nullable: true })
   shippingPhone: number;
 
-  @Column({ name: 'shipping_cost', type: 'numeric' })
+  @Column({ name: 'shipping_cost', type: 'numeric', nullable: true })
   shippingCost: number;
 
   @Column({ name: 'order_amount', type: 'numeric' })
