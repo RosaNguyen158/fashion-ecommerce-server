@@ -2,7 +2,6 @@ import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
 import { OrdersModule } from 'src/orders/orders.module';
-import { StripeModule } from 'src/stripe/stripe.module';
 import { UsersModule } from 'src/users/users.module';
 import { Payment } from './entities/payment.entity';
 import { PaymentsController } from './payments.controller';
@@ -12,7 +11,6 @@ import { PaymentsService } from './payments.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Payment]),
-    StripeModule,
     OrdersModule,
     forwardRef(() => OrdersModule),
     forwardRef(() => AuthModule),

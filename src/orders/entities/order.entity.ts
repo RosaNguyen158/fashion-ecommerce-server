@@ -21,16 +21,16 @@ export class Order {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'shipping_province' })
+  @Column({ name: 'shipping_province', nullable: true })
   shippingProvince: string;
 
-  @Column({ name: 'shipping_district' })
+  @Column({ name: 'shipping_district', nullable: true })
   shippingDistrict: string;
 
-  @Column({ name: 'detail_address' })
+  @Column({ name: 'detail_address', nullable: true })
   detailAddress: string;
 
-  @Column({ name: 'shipping_phone', type: 'int' })
+  @Column({ name: 'shipping_phone', type: 'int', nullable: true })
   shippingPhone: string;
 
   @Column({ name: 'shipping_cost', type: 'numeric' })

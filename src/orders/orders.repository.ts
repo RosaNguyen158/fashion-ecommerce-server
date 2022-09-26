@@ -2,12 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AddressesRepository } from 'src/addresses/addresses.repository';
 import { User } from 'src/users/entities/user.entity';
-import { Repository } from 'typeorm';
+import type { Repository } from 'typeorm';
 import { UpdateAddressOrderDto } from './dto/update-address-order.dto';
 import { Order } from './entities/order.entity';
 import { PaymentMethod } from './enum/payment-methods-enum';
 import { PaymentStatus } from './enum/payment-status-enum';
-import { ShippingCost } from './enum/shipping-cost-enum';
 
 @Injectable()
 export class OrdersRepository {

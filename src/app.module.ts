@@ -10,7 +10,6 @@ import { UsersModule } from './users/users.module';
 import { MailModule } from './mail/mail.module';
 import { AddressesModule } from './addresses/addresses.module';
 import { PaymentsModule } from './payments/payments.module';
-import { StripeModule } from './stripe/stripe.module';
 
 @Module({
   imports: [
@@ -21,7 +20,7 @@ import { StripeModule } from './stripe/stripe.module';
     UsersModule,
     CategoriesModule,
     ConfigModule.forRoot({
-      envFilePath: [`.env.stage.${process.env.STAGE}`],
+      envFilePath: `env/${(process.env.NODE_ENV || 'local').toLowerCase()}.env`,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -42,9 +41,6 @@ import { StripeModule } from './stripe/stripe.module';
     MailModule,
     AddressesModule,
     PaymentsModule,
-    StripeModule.forRoot(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2022-08-01',
-    }),
   ],
 })
 export class AppModule {}

@@ -1,10 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from 'src/orders/entities/order.entity';
-import { StripeModule } from 'src/stripe/stripe.module';
 import { User } from 'src/users/entities/user.entity';
 import { Stripe } from 'stripe';
-import { Repository } from 'typeorm';
+import type { Repository } from 'typeorm';
 import { CreateCardDto } from './dto/create-cart.dto';
 import { Payment } from './entities/payment.entity';
 // const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
@@ -32,6 +31,7 @@ export class PaymentsRepository {
         },
         { apiKey: process.env.STRIPE_SECRET_KEY },
       );
+
       return newCustomer;
     } catch (error) {
       throw new NotFoundException(error.message);

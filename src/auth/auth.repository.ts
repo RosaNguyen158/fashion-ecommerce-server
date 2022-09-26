@@ -1,10 +1,9 @@
-import { Repository } from 'typeorm';
+import type { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   HttpException,
   HttpStatus,
   Injectable,
-  NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -138,13 +137,13 @@ export class AuthRepository {
       accessToken: token,
     });
     if (!session) throw new Error('Not found user session');
-    const user = await this.userRepository.findOne(session.userId);
+    const user = await this.userRepository.findOneByID(session.userId);
 
     return { user, session };
   }
 
   async findOneByUserId(id: string): Promise<{ user: User; session: Session }> {
-    const user = await this.userRepository.findOne(id);
+    const user = await this.userRepository.findOneByID(id);
     const session = await this.sessionRepository.findOne({
       relations: {
         user: true,

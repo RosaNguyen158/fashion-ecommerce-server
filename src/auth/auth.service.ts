@@ -45,7 +45,7 @@ export class AuthService {
     signInUserDto: SignInUserDto,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     const { email, password } = signInUserDto;
-    const user = await this.userRepository.findUser(email, null);
+    const user = await this.userRepository.findOneByEmail(email);
     if (user && (await bcrypt.compare(password, user.password))) {
       return await this.authRepository.createSession(user);
     } else {
