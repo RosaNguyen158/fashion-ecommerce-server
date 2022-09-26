@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
-import { User } from 'src/users/entities/user.entity';
 import { GenerateKey } from './helpers/generate-key';
 import * as bcrypt from 'bcrypt';
 
