@@ -13,7 +13,8 @@ export class CartsRepository {
   ) {}
 
   async createCart(user: User): Promise<Cart> {
-    const newCart = await this.cartsRepository.create({
+    console.log('Create cart user', user);
+    const newCart = this.cartsRepository.create({
       user: user,
     });
     try {

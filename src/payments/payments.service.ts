@@ -1,12 +1,5 @@
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { NotFoundError } from 'rxjs';
-import { Order } from 'src/orders/entities/order.entity';
-import { OrderDetailsRepository } from 'src/orders/orderDetails.repository';
+import { Injectable, NotFoundException } from '@nestjs/common';
+
 import { OrdersRepository } from 'src/orders/orders.repository';
 import { User } from 'src/users/entities/user.entity';
 import { UserRepository } from 'src/users/users.repository';
@@ -17,10 +10,9 @@ import { PaymentsRepository } from './payments.repository';
 @Injectable()
 export class PaymentsService {
   constructor(
-    @Inject(forwardRef(() => OrdersRepository))
     private paymentsRepository: PaymentsRepository,
-    private usersRepository: UserRepository,
     private ordersRepository: OrdersRepository,
+    private usersRepository: UserRepository,
   ) {}
 
   async createNewCustomer(user: User): Promise<Stripe.Customer> {

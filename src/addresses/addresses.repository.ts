@@ -15,22 +15,31 @@ export class AddressesRepository {
   async addAddress(addAddressDto: AddAddressDto, user: User): Promise<Address> {
     let newAddress: Address;
     if (addAddressDto) {
-      newAddress = this.addresesRepository.create({
+      const id = '7800d062-e2a0-4164-a8ec-07bd7189f033';
+      console.log(user);
+      const newAddress = await this.addresesRepository.update(id, {
         province: addAddressDto.province,
-        district: addAddressDto.province,
-        addressDetail: addAddressDto.province,
+        district: addAddressDto.district,
+        addressDetail: addAddressDto.addressDetail,
         isDefault: false,
-        user: user,
       });
+      // newAddress = await this.addresesRepository.findOne({
+      //   where: {
+      //     user: {
+      //       id: user.id,
+      //     },
+      //   },
+      // });
+      console.log('Add address newAddress', newAddress);
     } else {
       newAddress = this.addresesRepository.create({
         isDefault: false,
         user: user,
       });
+      await this.addresesRepository.save(newAddress);
     }
 
     try {
-      await this.addresesRepository.save(newAddress);
       return newAddress;
     } catch (error) {
       throw new NotFoundException(error.message);
@@ -42,16 +51,18 @@ export class AddressesRepository {
       const address = await this.addresesRepository.findOne({
         relations: { user: true },
         where: {
-          user: user,
+          user: {
+            id: user.id,
+          },
           isDefault: true,
         },
       });
-      if (!address) {
-        throw new NotFoundException('You dont have address');
-      }
+      // if (!address) {
+      //   throw new NotFoundException('You dont have an address');
+      // }
       return address;
     } catch (error) {
-      throw new NotFoundException('You dont have address');
+      throw new NotFoundException(error.message);
     }
   }
 }

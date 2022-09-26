@@ -15,7 +15,7 @@ export class UserRepository {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
-  async listCategories(): Promise<User[]> {
+  async listUsers(): Promise<User[]> {
     const users = await this.userRepository.find();
     return users;
   }
@@ -37,8 +37,7 @@ export class UserRepository {
   }
 
   async findUser(email: string, phone: string): Promise<User> {
-    const user = this.userRepository.findOneBy({ email: email });
-    return user;
+    return await this.userRepository.findOneBy({ email: email });
   }
 
   async createUser(CreateUserDto: CreateUserDto): Promise<User> {

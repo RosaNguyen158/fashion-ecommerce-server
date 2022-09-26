@@ -143,6 +143,22 @@ export class AuthRepository {
     return { user, session };
   }
 
+  async findOneByUserId(id: string): Promise<{ user: User; session: Session }> {
+    const user = await this.userRepository.findOne(id);
+    const session = await this.sessionRepository.findOne({
+      relations: {
+        user: true,
+      },
+      where: {
+        user: {
+          id: user.id,
+        },
+      },
+    });
+
+    return { user, session };
+  }
+
   async deleteSessionById(id: string): Promise<void> {
     const result = await this.sessionRepository.delete({ id: id });
 

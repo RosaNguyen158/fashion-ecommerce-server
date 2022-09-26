@@ -47,7 +47,7 @@ export class User {
   @Exclude({
     toPlainOnly: true,
   })
-  address: Address[];
+  addresses: Address[];
 
   @OneToMany(() => Session, (session) => session.user, { eager: true })
   @Exclude({

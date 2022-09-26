@@ -8,7 +8,7 @@ import { CreateCardDto } from './dto/create-cart.dto';
 import { PaymentsService } from './payments.service';
 
 @Controller('payment')
-@UseGuards(AuthGuard())
+@UseGuards(AuthGuard('jwt'))
 export class PaymentsController {
   constructor(private paymentsService: PaymentsService) {}
 

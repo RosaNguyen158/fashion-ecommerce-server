@@ -14,7 +14,7 @@ export class Address {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, (user) => user.sessions, { eager: false })
+  @ManyToOne(() => User, (user) => user.addresses, { eager: false })
   @Exclude({
     toPlainOnly: true,
   })

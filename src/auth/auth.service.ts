@@ -12,12 +12,8 @@ import { UserRepository } from 'src/users/users.repository';
 import { AuthRepository } from './auth.repository';
 import { User } from 'src/users/entities/user.entity';
 import { MailService } from 'src/mail/mail.service';
-import { UsersService } from 'src/users/users.service';
 import { CartsRepository } from 'src/carts/carts.repository';
-import { Cart } from 'src/carts/entities/cart.entity';
-import { JwtPayload } from './user-payload.interface';
 import { AddressesRepository } from 'src/addresses/addresses.repository';
-import { AddAddressDto } from 'src/addresses/dto/add-address.dto';
 
 @Injectable()
 export class AuthService {
@@ -39,7 +35,7 @@ export class AuthService {
     await this.addresesRepository.addAddress(null, newUser);
     await this.userRepository.updateOtpUser('otpUser', newUser.id);
     const { accessToken } = await this.authRepository.createSession(newUser);
-    const { user } = await this.authRepository.findOneByToken(accessToken);
+    const { user } = await this.authRepository.findOneByUserId(newUser.id);
     await this.cartsRepository.createCart(user);
     // const otpUser = await this.mailService.sendUserConfirmation();
     return { accessToken, user };

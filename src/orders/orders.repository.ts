@@ -26,6 +26,8 @@ export class OrdersRepository {
     let cost: number;
     const addressDefault =
       await this.addressesRepository.findAddressDefaultByUser(user);
+    console.log(addressDefault);
+
     addressDefault.province == 'HN' || addressDefault.province == 'HCM'
       ? (cost = 20)
       : (cost = 30);

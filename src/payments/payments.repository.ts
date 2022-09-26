@@ -8,25 +8,30 @@ import { Repository } from 'typeorm';
 import { CreateCardDto } from './dto/create-cart.dto';
 import { Payment } from './entities/payment.entity';
 // const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2022-08-01',
-});
 
 @Injectable()
 export class PaymentsRepository {
+  private stripe: Stripe;
   constructor(
     @InjectRepository(Payment)
     private paymentsRepository: Repository<Payment>,
-  ) {}
+  ) {
+    this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2022-08-01',
+    });
+  }
 
   async createNewCustomer(user: User): Promise<Stripe.Customer> {
     try {
       console.log(user);
 
-      const newCustomer = await stripe.customers.create({
-        name: user.firstName + ' ' + user.lastName,
-        email: user.email,
-      });
+      const newCustomer = await this.stripe.customers.create(
+        {
+          name: user.firstName + ' ' + user.lastName,
+          email: user.email,
+        },
+        { apiKey: process.env.STRIPE_SECRET_KEY },
+      );
       return newCustomer;
     } catch (error) {
       throw new NotFoundException(error.message);
@@ -38,7 +43,7 @@ export class PaymentsRepository {
     user: User,
   ): Promise<Stripe.CustomerSource> {
     try {
-      const newCard = await stripe.tokens.create({
+      const newCard = await this.stripe.tokens.create({
         card: {
           name: createNewCard.cardName,
           number: createNewCard.cardNumber,
@@ -47,9 +52,12 @@ export class PaymentsRepository {
           cvc: createNewCard.cardCVC,
         },
       });
-      const card = await stripe.customers.createSource(user.customerStripeId, {
-        source: `${newCard.id}`,
-      });
+      const card = await this.stripe.customers.createSource(
+        user.customerStripeId,
+        {
+          source: `${newCard.id}`,
+        },
+      );
       return card;
     } catch (error) {
       throw new NotFoundException(error.message);
@@ -62,7 +70,7 @@ export class PaymentsRepository {
     cardId: string,
   ): Promise<Stripe.Charge> {
     try {
-      const charge = await stripe.charges.create({
+      const charge = await this.stripe.charges.create({
         receipt_email: user.email,
         amount: order.orderAmount,
         currency: 'usd',
