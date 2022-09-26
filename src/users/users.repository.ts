@@ -32,14 +32,7 @@ export class UserRepository {
   }
 
   async findOneByEmail(email: string): Promise<User> {
-    const user = await this.userRepository.findOneBy({ email: email });
-
-    return user;
-  }
-
-  async findUser(email: string, phone: string): Promise<User> {
-    const user = this.userRepository.findOneBy({ email: email });
-    return user;
+    return await this.userRepository.findOneBy({ email: email });
   }
 
   async createUser(CreateUserDto: CreateUserDto): Promise<User> {
