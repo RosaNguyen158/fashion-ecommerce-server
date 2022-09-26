@@ -16,12 +16,12 @@ export class UserRepository {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
-  async findAll() {
+  async findAll(): Promise<User[]> {
     const users = await this.userRepository.find();
     return users;
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<User> {
     const user = await this.userRepository.findOneBy({ id: id });
 
     if (!user) {
@@ -31,7 +31,7 @@ export class UserRepository {
     return user;
   }
 
-  async findOneByEmail(email: string) {
+  async findOneByEmail(email: string): Promise<User> {
     const user = await this.userRepository.findOneBy({ email: email });
 
     return user;
