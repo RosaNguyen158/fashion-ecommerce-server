@@ -1,8 +1,6 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { ObjectUnsubscribedError } from 'rxjs';
+import { Injectable } from '@nestjs/common';
 import { CartDetailsRepository } from 'src/carts/cartdetails.repository';
 import { User } from 'src/users/entities/user.entity';
-import { UserRepository } from 'src/users/users.repository';
 import { Order } from './entities/order.entity';
 import { PaymentMethod } from './enum/payment-methods-enum';
 import { PaymentStatus } from './enum/payment-status-enum';

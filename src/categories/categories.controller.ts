@@ -1,5 +1,4 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { async } from 'rxjs';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { Category } from './entities/category.entity';

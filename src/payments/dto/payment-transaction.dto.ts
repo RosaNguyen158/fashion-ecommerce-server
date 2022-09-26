@@ -1,11 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsDate,
-  IsString,
-  IsMongoId,
-  IsNumber,
-  IsOptional,
-} from 'class-validator';
+import { IsDate, IsString, IsNumber, IsOptional } from 'class-validator';
 
 export class PaymentTransactionDto {
   @IsOptional()

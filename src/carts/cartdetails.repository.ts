@@ -10,7 +10,6 @@ import { Cart } from './entities/cart.entity';
 import { Product } from 'src/products/entities/product.entity';
 import { CartDetail } from './entities/cart-detail.entity';
 import { ProductsRepository } from 'src/products/products.repository';
-import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class CartDetailsRepository {

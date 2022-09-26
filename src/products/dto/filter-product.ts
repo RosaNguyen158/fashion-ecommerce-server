@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { Type } from 'class-transformer';
-import { IsEmpty, IsNotEmpty } from 'class-validator';
 import { FindOptionsOrderValue } from 'typeorm';
 
 export class FilterValueDto {
