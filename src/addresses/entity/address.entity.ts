@@ -20,21 +20,21 @@ export class Address {
   })
   user: User;
 
-  @Column({ name: 'province', nullable: true })
+  @Column({ nullable: true })
   province: string;
 
-  @Column({ name: 'district', nullable: true })
+  @Column({ nullable: true })
   district: string;
 
-  @Column({ name: 'address_detail', nullable: true })
+  @Column({ nullable: true })
   addressDetail: string;
 
-  @Column({ name: 'is_default', type: 'boolean' })
+  @Column({ type: 'boolean' })
   isDefault: boolean;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt: Date;
 }

@@ -15,10 +15,10 @@ import { CartDetail } from './cart-detail.entity';
 export class Cart {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt: Date;
 
   @OneToOne(() => User, (user) => user.cart)

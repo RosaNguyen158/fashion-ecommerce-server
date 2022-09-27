@@ -14,16 +14,16 @@ export class Payment {
   @PrimaryColumn()
   id: string;
 
-  @Column({ name: 'amount' })
+  @Column()
   amount: number;
 
-  @Column({ name: 'capture', nullable: true })
+  @Column({ nullable: true })
   capture: boolean;
 
-  @Column({ name: 'currency' })
+  @Column()
   currency: string;
 
-  @Column({ name: 'status' })
+  @Column()
   status: string;
 
   //   @Column({ type: 'jsonb', nullable: true })
@@ -33,9 +33,9 @@ export class Payment {
   @JoinColumn()
   order: Order;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt: Date;
 }

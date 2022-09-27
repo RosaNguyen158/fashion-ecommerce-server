@@ -19,28 +19,28 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'first_name' })
+  @Column()
   firstName: string;
 
-  @Column({ name: 'last_name' })
+  @Column()
   lastName: string;
 
   @Column()
   password: string;
 
-  @Column({ name: 'email', nullable: true, unique: true })
+  @Column({ nullable: true, unique: true })
   email: string;
 
-  @Column({ name: 'phone', nullable: true, unique: true })
+  @Column({ nullable: true, unique: true })
   phone: string;
 
-  @Column({ name: 'otp', nullable: true })
+  @Column({ nullable: true })
   otp: string;
 
-  @Column({ name: 'role' })
+  @Column()
   role: UserRoles;
 
-  @Column({ name: 'customer_stripe_id', nullable: true })
+  @Column({ nullable: true })
   customerStripeId: string;
 
   @OneToMany(() => Address, (address) => address.user, { eager: true })
@@ -64,9 +64,9 @@ export class User {
   })
   orders: Order[];
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt: Date;
 }

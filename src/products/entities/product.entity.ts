@@ -16,19 +16,19 @@ export class Product {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'product_image', nullable: true })
+  @Column({ nullable: true })
   productImage: string;
 
-  @Column({ name: 'name', unique: true })
+  @Column({ unique: true })
   name: string;
 
-  @Column({ name: 'description' })
+  @Column()
   description: string;
 
-  @Column({ name: 'price', type: 'numeric' })
+  @Column({ type: 'numeric' })
   price: number;
 
-  @Column({ name: 'discount', type: 'numeric', nullable: true })
+  @Column({ type: 'numeric', nullable: true })
   discount: number;
 
   @ManyToOne(() => Category, (category) => category.products, { eager: false })
@@ -53,9 +53,9 @@ export class Product {
   // })
   orderDetails: CartDetail[];
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt: Date;
 }

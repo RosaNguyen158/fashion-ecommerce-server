@@ -20,18 +20,15 @@ export class CartDetail {
   // })
   cart: Cart;
 
-  //   toPlainOnly: true, { eager: false },
   @ManyToOne(() => Product, (product) => product.cartDetails, { eager: false })
-  // @Exclude({
-  // })
   product: Product;
 
-  @Column({ name: 'quantity' })
+  @Column()
   quantity: number;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt: Date;
 }

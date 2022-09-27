@@ -13,15 +13,15 @@ export class Category {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'category', unique: true })
+  @Column({ unique: true })
   category: string;
 
   @OneToMany(() => Product, (product) => product.category, { eager: true })
   products: Product[];
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt: Date;
 }

@@ -10,6 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/entities/user.entity';
 import { Session } from './entities/session.entity';
 import { UserRepository } from 'src/users/users.repository';
+import { Test } from '@nestjs/testing';
 
 @Injectable()
 export class AuthRepository {

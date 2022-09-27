@@ -22,18 +22,18 @@ export class Session {
   })
   user: User;
 
-  @Column({ name: 'user_id' })
+  @Column({ nullable: true })
   userId: string;
 
-  @Column({ name: 'access_token', nullable: true })
+  @Column({ nullable: true })
   accessToken: string;
 
-  @Column({ name: 'refresh_token', nullable: true })
+  @Column({ nullable: true })
   refreshToken: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt: Date;
 }

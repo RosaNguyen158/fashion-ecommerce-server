@@ -10,6 +10,7 @@ import { UsersModule } from './users/users.module';
 import { MailModule } from './mail/mail.module';
 import { AddressesModule } from './addresses/addresses.module';
 import { PaymentsModule } from './payments/payments.module';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { PaymentsModule } from './payments/payments.module';
           username: configService.get('DB_USERNAME') || 'postgres',
           password: configService.get('DB_PASSWORD') || '123',
           database: configService.get('DB_DATABASE') || 'fashion-ecommerce',
+          namingStrategy: new SnakeNamingStrategy(),
         };
       },
     }),

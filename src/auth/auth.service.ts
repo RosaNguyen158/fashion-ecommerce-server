@@ -19,6 +19,7 @@ import { AddressesRepository } from 'src/addresses/addresses.repository';
 export class AuthService {
   constructor(
     @Inject(forwardRef(() => UserRepository))
+    @Inject(forwardRef(() => UserRepository))
     @Inject(forwardRef(() => CartsRepository))
     @Inject(forwardRef(() => AddressesRepository))
     private userRepository: UserRepository,
