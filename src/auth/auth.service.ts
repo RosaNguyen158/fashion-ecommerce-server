@@ -2,6 +2,7 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  NotAcceptableException,
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
@@ -12,6 +13,9 @@ import { AuthRepository } from './auth.repository';
 import { User } from 'src/users/entities/user.entity';
 import { MailService } from 'src/mail/mail.service';
 import { CartsRepository } from 'src/carts/carts.repository';
+import { Cart } from 'src/carts/entities/cart.entity';
+import { JwtPayload } from './user-payload.interface';
+
 
 @Injectable()
 export class AuthService {
@@ -27,13 +31,12 @@ export class AuthService {
   async signUp(
     createUserDto: CreateUserDto,
   ): Promise<{ accessToken: string; user: User }> {
-    const user = await this.userRepository.createUser(createUserDto);
-    console.log('Sign up', user);
-    const userCart = await this.cartsRepository.createCart(user);
-    console.log(userCart);
+    const newUser = await this.userRepository.createUser(createUserDto);
+    await this.userRepository.updateOtpUser('otpUser', newUser.id);
+    const { accessToken } = await this.authRepository.createSession(newUser);
+    const { user } = await this.authRepository.findOneByToken(accessToken);
+    await this.cartsRepository.createCart(user);
     // const otpUser = await this.mailService.sendUserConfirmation();
-    const { accessToken } = await this.authRepository.createSession(user);
-    await this.userRepository.updateOtpUser('otpUser', user.id);
     return { accessToken, user };
   }
 
@@ -60,7 +63,7 @@ export class AuthService {
       console.log(id);
       await this.authRepository.removeToken(session.id);
     } catch (e) {
-      throw new Error(e);
+      throw new NotAcceptableException(e);
     }
   }
 
@@ -71,7 +74,7 @@ export class AuthService {
     const validOTP = await bcrypt.compare(`${otp}`, user.otp);
     if (!validOTP) {
       await this.authRepository.deleteSessionById(session.id);
-      throw new Error('Verify OTP Failed');
+      throw new NotAcceptableException('Verify OTP Failed');
     }
     await this.userRepository.updateOtpUser(null, user.id);
     return this.authRepository.generateTokens(user);

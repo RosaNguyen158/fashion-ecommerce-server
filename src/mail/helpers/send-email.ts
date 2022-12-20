@@ -1,3 +1,4 @@
+import { NotAcceptableException } from '@nestjs/common';
 import bycrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
 import { User } from 'src/users/entities/user.entity';
@@ -29,6 +30,6 @@ export const sendOTPVerificationEmail = async (user: User) => {
     await transporter.sendMail(mailOptions);
     return hashedOTP;
   } catch (error) {
-    throw new Error(error);
+    throw new NotAcceptableException(error.message);
   }
 };

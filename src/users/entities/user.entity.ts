@@ -1,5 +1,7 @@
+import { Exclude } from 'class-transformer';
 import { Session } from 'src/auth/entities/session.entity';
 import { Cart } from 'src/carts/entities/cart.entity';
+import { Order } from 'src/orders/entities/order.entity';
 import {
   Column,
   CreateDateColumn,
@@ -35,8 +37,14 @@ export class User {
   @Column({ name: 'otp', nullable: true })
   otp: string;
 
-  @Column({ name: 'default_address', nullable: true })
-  defaultAddress: string;
+  @Column({ name: 'province', nullable: true })
+  province: string;
+
+  @Column({ name: 'district', nullable: true })
+  district: string;
+
+  @Column({ name: 'detail_address', nullable: true })
+  detailAddress: string;
 
   @Column({ name: 'role' })
   role: UserRoles;
@@ -45,11 +53,19 @@ export class User {
   customerStripeId: string;
 
   @OneToMany(() => Session, (session) => session.user, { eager: true })
+  @Exclude({
+    toPlainOnly: true,
+  })
   sessions: Session[];
 
   @OneToOne(() => Cart, (cart) => cart.user)
-  @JoinColumn()
   cart: Cart;
+
+  @OneToMany(() => Order, (order) => order.user, { eager: true })
+  @Exclude({
+    toPlainOnly: true,
+  })
+  orders: Order[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

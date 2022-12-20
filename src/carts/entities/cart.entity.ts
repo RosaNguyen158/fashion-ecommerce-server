@@ -17,10 +17,6 @@ import { CartDetail } from './cart-detail.entity';
 export class Cart {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column({ type: 'jsonb', nullable: true })
-  user_info: User;
-
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
@@ -28,13 +24,14 @@ export class Cart {
   updatedAt: Date;
 
   @OneToOne(() => User, (user) => user.cart)
-  // @Exclude({
-  //   toPlainOnly: true,
-  // })
+  @JoinColumn()
   user: User;
 
-  @OneToMany(() => CartDetail, (cart_details) => cart_details.cart, {
-    eager: true,
+  @OneToMany(() => CartDetail, (cart_detail) => cart_detail.cart, {
+    eager: false,
+  })
+  @Exclude({
+    toPlainOnly: true,
   })
   cart_details: CartDetail[];
 }

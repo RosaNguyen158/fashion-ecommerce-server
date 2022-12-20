@@ -1,5 +1,6 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
+import { FilterValueDto } from './dto/filter-product';
 import { Product } from './entities/product.entity';
 import { ProductsService } from './products.service';
 
@@ -12,5 +13,15 @@ export class ProductsController {
     @Body() createProductDto: CreateProductDto,
   ): Promise<Product> {
     return this.productsService.createProduct(createProductDto);
+  }
+
+  @Get('/filter-products')
+  async filterProducts(
+    @Body() filterProducts: FilterValueDto,
+  ): Promise<Product[]> {
+    const listProducts = await this.productsService.filterProduct(
+      filterProducts,
+    );
+    return listProducts;
   }
 }
