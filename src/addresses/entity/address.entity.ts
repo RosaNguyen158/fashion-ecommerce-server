@@ -9,27 +9,28 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity({ name: 'sessions' })
-export class Session {
+@Entity({ name: 'addresses' })
+export class Address {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, (user) => user.sessions, { eager: false })
+  @ManyToOne(() => User, (user) => user.addresses, { eager: false })
   @Exclude({
     toPlainOnly: true,
-    // Not show information about user's sessions when return result ,
-    // To use this decorator must use TranformInterceptor in app.module,
   })
   user: User;
 
   @Column({ nullable: true })
-  userId: string;
+  province: string;
 
   @Column({ nullable: true })
-  accessToken: string;
+  district: string;
 
   @Column({ nullable: true })
-  refreshToken: string;
+  addressDetail: string;
+
+  @Column({ type: 'boolean' })
+  isDefault: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

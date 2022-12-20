@@ -1,4 +1,5 @@
 import { Exclude } from 'class-transformer';
+import { Payment } from 'src/payments/entities/payment.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
@@ -6,6 +7,7 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -17,17 +19,18 @@ import { OrderDetail } from './order-detail.entitty';
 export class Order {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  
-  @Column({ name: 'shipping_province' })
+
+  @Column({ name: 'shipping_province', nullable: true })
+
   shippingProvince: string;
 
-  @Column({ name: 'shipping_district' })
+  @Column({ name: 'shipping_district', nullable: true })
   shippingDistrict: string;
 
-  @Column({ name: 'detail_address' })
+  @Column({ name: 'detail_address', nullable: true })
   detailAddress: string;
 
-  @Column({ name: 'shipping_phone', type: 'int' })
+  @Column({ name: 'shipping_phone', type: 'int', nullable: true })
   shippingPhone: string;
 
 
@@ -56,6 +59,9 @@ export class Order {
   //   toPlainOnly: true,
   // })
   orderDetails: OrderDetail[];
+
+  @OneToOne(() => Payment, (payment) => payment.order)
+  payment: Payment;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

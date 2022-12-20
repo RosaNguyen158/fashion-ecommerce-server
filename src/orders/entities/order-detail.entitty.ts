@@ -2,10 +2,11 @@ import { Exclude } from 'class-transformer';
 import { Product } from 'src/products/entities/product.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Order } from './order.entity';
 
@@ -28,6 +29,12 @@ export class OrderDetail {
   @Column({ type: 'jsonb', nullable: true })
   productInfo: Product;
 
-  @Column({ name: 'quantity' })
+  @Column()
   quantity: number;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

@@ -13,18 +13,20 @@ import { AuthRepository } from './auth.repository';
 import { User } from 'src/users/entities/user.entity';
 import { MailService } from 'src/mail/mail.service';
 import { CartsRepository } from 'src/carts/carts.repository';
-import { Cart } from 'src/carts/entities/cart.entity';
-import { JwtPayload } from './user-payload.interface';
+import { AddressesRepository } from 'src/addresses/addresses.repository';
 
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject(forwardRef(() => UserRepository))
+    @Inject(forwardRef(() => UserRepository))
     @Inject(forwardRef(() => CartsRepository))
+    @Inject(forwardRef(() => AddressesRepository))
     private userRepository: UserRepository,
     private authRepository: AuthRepository,
     private cartsRepository: CartsRepository,
+    private addresesRepository: AddressesRepository,
     private mailService: MailService,
   ) {}
 
@@ -32,21 +34,20 @@ export class AuthService {
     createUserDto: CreateUserDto,
   ): Promise<{ accessToken: string; user: User }> {
     const newUser = await this.userRepository.createUser(createUserDto);
+    await this.addresesRepository.addAddress(null, newUser);
     await this.userRepository.updateOtpUser('otpUser', newUser.id);
     const { accessToken } = await this.authRepository.createSession(newUser);
-    const { user } = await this.authRepository.findOneByToken(accessToken);
+    const { user } = await this.authRepository.findOneByUserId(newUser.id);
     await this.cartsRepository.createCart(user);
     // const otpUser = await this.mailService.sendUserConfirmation();
     return { accessToken, user };
   }
 
-  // async verifyOtpEmail(otp: string) {}
-
   async signIn(
     signInUserDto: SignInUserDto,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     const { email, password } = signInUserDto;
-    const user = await this.userRepository.findUser(email, null);
+    const user = await this.userRepository.findOneByEmail(email);
     if (user && (await bcrypt.compare(password, user.password))) {
       return await this.authRepository.createSession(user);
     } else {
@@ -68,12 +69,9 @@ export class AuthService {
   }
 
   async verifyOtpEmail(otp: string, authHeaders: string) {
-    const { user, session } = await this.authRepository.findOneByToken(
-      authHeaders,
-    );
+    const { user } = await this.authRepository.findOneByToken(authHeaders);
     const validOTP = await bcrypt.compare(`${otp}`, user.otp);
     if (!validOTP) {
-      await this.authRepository.deleteSessionById(session.id);
       throw new NotAcceptableException('Verify OTP Failed');
     }
     await this.userRepository.updateOtpUser(null, user.id);

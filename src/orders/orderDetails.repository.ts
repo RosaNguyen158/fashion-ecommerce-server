@@ -25,4 +25,14 @@ export class OrderDetailsRepository {
       throw new NotFoundException(error.message);
     }
   }
+
+  async findListOrderDetails(order: Order): Promise<OrderDetail[]> {
+    const listOrderDts = await this.orderDetailsRepository.find({
+      relations: { order: true },
+      where: {
+        order: order,
+      },
+    });
+    return listOrderDts;
+  }
 }

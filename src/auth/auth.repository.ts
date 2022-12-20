@@ -4,13 +4,13 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
-  NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/entities/user.entity';
 import { Session } from './entities/session.entity';
 import { UserRepository } from 'src/users/users.repository';
+import { Test } from '@nestjs/testing';
 
 @Injectable()
 export class AuthRepository {
@@ -21,7 +21,11 @@ export class AuthRepository {
     private readonly jwtService: JwtService,
   ) {}
 
-  async setRefreshToken(refreshToken: string, accessToken: string, user: User) {
+  async setRefreshToken(
+    refreshToken: string,
+    accessToken: string,
+    user: User,
+  ): Promise<Session> {
     const session = this.sessionRepository.create({
       accessToken: accessToken,
       refreshToken: refreshToken,
@@ -40,19 +44,18 @@ export class AuthRepository {
     refreshToken: string,
     accessToken: string,
     id: string,
-  ) {
+  ): Promise<void> {
     try {
       await this.sessionRepository.update(id, {
         accessToken: accessToken,
         refreshToken: refreshToken,
       });
-      return true;
     } catch (error) {
       throw new NotFoundException(error.message);
     }
   }
 
-  async getRefreshToken(id: string) {
+  async getRefreshToken(id: string): Promise<string> {
     const session = await this.sessionRepository.findOneBy({ id: id });
 
     const token = session.refreshToken;
@@ -102,13 +105,13 @@ export class AuthRepository {
     return { accessToken, refreshToken };
   }
 
-  async createSession(user: User) {
+  async createSession(user: User): Promise<Session> {
     const { refreshToken, accessToken } = await this.generateTokens(user);
     const session = this.setRefreshToken(accessToken, refreshToken, user);
     return session;
   }
 
-  async updateSession(id: string, user: User) {
+  async updateSession(id: string, user: User): Promise<string> {
     const { refreshToken, accessToken } = await this.generateTokens(user);
     await this.resetRefreshToken(accessToken, refreshToken, id);
     return accessToken;
@@ -135,7 +138,23 @@ export class AuthRepository {
       accessToken: token,
     });
     if (!session) throw new Error('Not found user session');
-    const user = await this.userRepository.findOne(session.userId);
+    const user = await this.userRepository.findOneByID(session.userId);
+
+    return { user, session };
+  }
+
+  async findOneByUserId(id: string): Promise<{ user: User; session: Session }> {
+    const user = await this.userRepository.findOneByID(id);
+    const session = await this.sessionRepository.findOne({
+      relations: {
+        user: true,
+      },
+      where: {
+        user: {
+          id: user.id,
+        },
+      },
+    });
 
     return { user, session };
   }

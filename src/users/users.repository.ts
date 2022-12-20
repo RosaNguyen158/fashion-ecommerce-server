@@ -15,12 +15,12 @@ export class UserRepository {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
-  async listCategories(): Promise<User[]> {
+  async listUsers(): Promise<User[]> {
     const users = await this.userRepository.find();
     return users;
   }
 
-  async findOne(id: string): Promise<User> {
+  async findOneByID(id: string): Promise<User> {
     const user = await this.userRepository.findOneBy({ id: id });
 
     if (!user) {
@@ -32,12 +32,9 @@ export class UserRepository {
 
   async findOneByEmail(email: string): Promise<User> {
     const user = await this.userRepository.findOneBy({ email: email });
-
-    return user;
-  }
-
-  async findUser(email: string, phone: string): Promise<User> {
-    const user = this.userRepository.findOneBy({ email: email });
+    if (!user) {
+      throw new NotFoundException(`There is no user under email ${email}`);
+    }
     return user;
   }
 
@@ -67,6 +64,14 @@ export class UserRepository {
   async updateOtpUser(value: string, id: string): Promise<void> {
     try {
       await this.userRepository.update(id, { otp: value });
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
+  }
+
+  async updateStripeIdUser(value: string, id: string): Promise<void> {
+    try {
+      await this.userRepository.update(id, { customerStripeId: value });
     } catch (error) {
       throw new NotFoundException(error.message);
     }

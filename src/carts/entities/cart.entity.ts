@@ -1,8 +1,6 @@
 import { Exclude } from 'class-transformer';
-import { Product } from 'src/products/entities/product.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
-  Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
@@ -17,10 +15,10 @@ import { CartDetail } from './cart-detail.entity';
 export class Cart {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt: Date;
 
   @OneToOne(() => User, (user) => user.cart)

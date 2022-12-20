@@ -10,13 +10,16 @@ import { Session } from './entities/session.entity';
 import { JwtStrategy } from './jwt.strategy';
 import { MailModule } from 'src/mail/mail.module';
 import { CartsModule } from 'src/carts/carts.module';
+import { AddressesModule } from 'src/addresses/addresses.module';
+import { Test } from '@nestjs/testing';
 
 @Module({
   imports: [
     MailModule,
     forwardRef(() => UsersModule),
     forwardRef(() => CartsModule),
-    TypeOrmModule.forFeature([Session]),
+    forwardRef(() => AddressesModule),
+    TypeOrmModule.forFeature([Session, Test]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: 'topSecret51',

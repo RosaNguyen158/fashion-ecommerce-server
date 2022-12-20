@@ -10,10 +10,12 @@ import { AuthModule } from 'src/auth/auth.module';
 import { ProductsModule } from 'src/products/products.module';
 import { OrdersRepository } from './orders.repository';
 import { CartsModule } from 'src/carts/carts.module';
+import { AddressesModule } from 'src/addresses/addresses.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Order, OrderDetail]),
+    forwardRef(() => AddressesModule),
     forwardRef(() => UsersModule),
     forwardRef(() => AuthModule),
     forwardRef(() => ProductsModule),
@@ -21,5 +23,6 @@ import { CartsModule } from 'src/carts/carts.module';
   ],
   providers: [OrdersService, OrdersRepository, OrderDetailsRepository],
   controllers: [OrdersController],
+  exports: [OrderDetailsRepository, OrdersRepository],
 })
 export class OrdersModule {}

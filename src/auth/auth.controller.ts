@@ -1,5 +1,4 @@
 import { Body, Controller, Post, Req } from '@nestjs/common';
-import { Cart } from 'src/carts/entities/cart.entity';
 import { User } from 'src/users/entities/user.entity';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -38,9 +37,9 @@ export class AuthController {
     return result;
   }
 
-  @Post('/logout')
-  async logout(@Req() req: Request): Promise<void> {
-    const token = req.headers['authorization'].split(' ')[1];
-    await this.authService.logout(token);
-  }
+  // @Post('/logout')
+  // async logout(@Req() req: Request): Promise<void> {
+  //   const token = req.headers['authorization'].split(' ')[1];
+  //   await this.authService.logout(token);
+  // }
 }

@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import type { Repository } from 'typeorm';
 import { Cart } from './entities/cart.entity';
 import { User } from 'src/users/entities/user.entity';
-import { CartDetail } from './entities/cart-detail.entity';
 
 @Injectable()
 export class CartsRepository {
@@ -13,7 +12,8 @@ export class CartsRepository {
   ) {}
 
   async createCart(user: User): Promise<Cart> {
-    const newCart = await this.cartsRepository.create({
+    console.log('Create cart user', user);
+    const newCart = this.cartsRepository.create({
       user: user,
     });
     try {
@@ -30,6 +30,7 @@ export class CartsRepository {
       });
       return cart;
     } catch (error) {
+      console.log(error);
       throw new NotFoundException(error.message);
     }
   }
