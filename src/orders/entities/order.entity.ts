@@ -21,6 +21,7 @@ export class Order {
   id: string;
 
   @Column({ name: 'shipping_province', nullable: true })
+
   shippingProvince: string;
 
   @Column({ name: 'shipping_district', nullable: true })
@@ -32,7 +33,8 @@ export class Order {
   @Column({ name: 'shipping_phone', type: 'int', nullable: true })
   shippingPhone: string;
 
-  @Column({ name: 'shipping_cost', type: 'numeric' })
+
+  @Column({ name: 'shipping_cost', type: 'numeric', nullable: true })
   shippingCost: number;
 
   @Column({ name: 'order_amount', type: 'numeric', default: 0 })
