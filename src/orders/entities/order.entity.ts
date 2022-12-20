@@ -17,7 +17,7 @@ import { OrderDetail } from './order-detail.entitty';
 export class Order {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
+  
   @Column({ name: 'shipping_province' })
   shippingProvince: string;
 
@@ -30,7 +30,8 @@ export class Order {
   @Column({ name: 'shipping_phone', type: 'int' })
   shippingPhone: string;
 
-  @Column({ name: 'shipping_cost', type: 'numeric' })
+
+  @Column({ name: 'shipping_cost', type: 'numeric', nullable: true })
   shippingCost: number;
 
   @Column({ name: 'order_amount', type: 'numeric', default: 0 })

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import type { Repository } from 'typeorm';
 import { Cart } from './entities/cart.entity';
 import { User } from 'src/users/entities/user.entity';
 import { CartDetail } from './entities/cart-detail.entity';

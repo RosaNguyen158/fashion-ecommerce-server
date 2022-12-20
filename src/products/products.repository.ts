@@ -6,6 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoriesRepository } from 'src/categories/categories.repository';
 import { Between, FindOptionsOrderValue, In, Like, Repository } from 'typeorm';
+import type { Repository } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
 import { Product } from './entities/product.entity';
 
